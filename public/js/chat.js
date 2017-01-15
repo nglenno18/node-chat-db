@@ -65,18 +65,10 @@ socket.on('connect', function(){
         });
         return result;
       });
-
-      // console.log(messageForm);
-      // console.log(jQuery('#messages').children('li'));
-      // console.log(jQuery('#messages').children('li')[0].children[1].innerText);
-      // console.log(messageForm);
-      // console.log(jQuery('#messages').children('li.message'));
-
       scrollToBottom();
       console.log('No ERROR');
     }
   });
-
 
   var sortItems = function() {
     var $items = $('#messages li');
@@ -88,10 +80,10 @@ socket.on('connect', function(){
     $.each($items, function(index, row){
         $('ol').append(row);
     });
-}
+  }
 });
 
-//NEW LISTENER --> Update the User List
+//NEW LISTENER --> Update the Occs List
 socket.on('updateOccupants', function(occs){
   console.log('Occupants List: ', occs);
   var ol = jQuery('<ol></ol>');

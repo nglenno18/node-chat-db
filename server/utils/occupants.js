@@ -72,16 +72,7 @@ class Occupants{
     console.log('FIND OCCUpant: ', id);
     console.log('GoT OCCUpant: ', this.occupants);
     return occ;
-    // var gotOcc = this.occupants.filter(function(user){
-    //   return user.id === id;
-    // });
-    // if(!gotOcc.length > 0){
-    //   return (`Missing User with id ${id}`);
-    // }
-    // console.log('Document returned from getOccupant filter: ', gotOcc);
-    // return(gotOcc);
   }
-
 
 }//end Occupants Class
 module.exports = {Occupants};

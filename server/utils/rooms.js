@@ -53,18 +53,13 @@ class Rooms {
     var message = "";
     var messages = [];
     name = name.toUpperCase();
-    if(isRealString(name)){
-      if(this.isTaken(name)===false){
-        var roomDB = new ModeledRoom({roomName:name, messages}).save();
-        return roomDB.then(function(docs){
-          console.log(`room SAVED to the DB: ${docs}`);
-          return docs;
-        });
-      }else {
-        message = 'Room is Taken';
-      }
-    }
-    return message;
+    if(!isRealString(name)) return 'Room is Invalid';
+    if(this.isTaken(name)) return 'Room is Taken';
+    var roomDB = new ModeledRoom({roomName:name, messages}).save();
+    return roomDB.then(function(docs){
+      console.log(`room SAVED to the DB: ${docs}`);
+      return docs;
+    });
   }
 
   pushRoom(room){
@@ -154,22 +149,22 @@ class Rooms {
     }
   }
 
-  updateMessages(name, message){
-    // var r = this.getRoom(name);
-    console.log('\n\nRoom Name to be updated: ', name);
-    var matches= this.rooms.filter(function(r){
-      return r.name === name;
-    });
-    var r = matches[0];
-    console.log('\n', r);      //HOW THE FUCK IS THIS UNDEFINED
-    console.log('\n\n\n');
-    if(r){
-      console.log('Should have updateMessages for ROOM', r.name);
-      console.log(message);
-      r.messages.push(message);
-      return r;
-    }
-  }
+  // updateMessages(name, message){
+  //   // var r = this.getRoom(name);
+  //   console.log('\n\nRoom Name to be updated: ', name);
+  //   var matches= this.rooms.filter(function(r){
+  //     return r.name === name;
+  //   });
+  //   var r = matches[0];
+  //   console.log('\n', r);      //HOW THE FUCK IS THIS UNDEFINED
+  //   console.log('\n\n\n');
+  //   if(r){
+  //     console.log('Should have updateMessages for ROOM', r.name);
+  //     console.log(message);
+  //     r.messages.push(message);
+  //     return r;
+  //   }
+  // }
 
 }//END ROOMS class
 

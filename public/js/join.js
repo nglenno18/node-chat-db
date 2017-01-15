@@ -43,12 +43,12 @@ socket.on('updateRoomsList', function(rooms){
   var ol = jQuery('<ol></ol>');
   rooms.forEach(function(room){
     console.log(room);
-    ol.append(jQuery('<li></li>').text(room.name));    //append the list item
+    ol.append(jQuery('<li></li>').text(room.roomName));    //append the list item
     // var html = Mustache.render(template, {
     //   name: room.name
     // });
-    console.log('ROOM trying to be updated: ', room.name);
-    addToDropBox(room.name);
+    console.log('ROOM trying to be updated: ', room.roomName);
+    addToDropBox(room.roomName);
   });
   jQuery('#rooms').html(ol);
 });
