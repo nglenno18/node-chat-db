@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Join</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="/css/styles.css">
+  <div class="chat__sidebar">
+    <h3>Chat Rooms</h3>
+    <div id="rooms"></div>
+  </div>
+</head>
+
+<body class="centered-form" onLoad="loadDropDown()">
+  <div class="centered-form__form">
+    <form action="/chat.html">
+      <div class="form-field">
+        <h3>Join a Chat</h3>
+      </div>
+      <div class="form-field">
+        <label>Display Name</label>
+        <input type="text" name="name" autofocus/>
+      </div>
+      <div class="form-field">
+        <label>Room Name</label>
+        <input id="room-text" type="text" name="room"/>
+      </div>
+      <div>
+        <label>Online Chat Rooms</label>
+      </div>
+      <div>
+        <select id="open-rooms" onclick="onSelectedChanged()"onChange="onSelectedChanged()"></select>
+      </div>
+      <div class="form-field">
+        <button>Join</button>
+      </div>
+    </form>
+    <form id="logout-form" formaction="/">
+      <div>
+        <input type= "submit" value="LOGOUT" action="/"</input>
+      </div>
+    </form>
+  </div>
+
+  <script src="/js/libs/mustache.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <script src="/js/libs/jquery-3.1.1.min.js"></script>
+  <script src="/js/join.js"></script>
+</body>
+</html>

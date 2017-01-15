@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+</head>
+<style>
+.highlight{border-color: red}
+</style>
+<body>
+  <div class="centered-form__form">
+    <form id= "login-form" action="/join.html">
+      <div class="form-field">
+        <h3>Email Credentials</h3>
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input id="email-text" type="text" name="email" autofocus/>
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <input id="password-text" type="password" name="password"/>
+      </div>
+      <div class="form-field">
+        <button type="submit" action="/join.html">LOGIN</button>
+      </div>
+    </form>
+    <form id="register-form" action = "/register.html" method="GET">
+      <input type= "submit" value="REGISTER (New User)"</input>
+    </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src = "/js/libs/jquery-3.1.1.min.js"></script>
+  <script src = "/js/login.js">
+    // var socket = io();
+    //
+    // socket.on('connect', ()=>{
+    //   console.log('Connected to the SERVER');
+    // });
+    // socket.on('disconnect', ()=>{
+    //   console.log('Disconnected from the SERVER');
+    // });
+  </script>
+</body>
+</html>
