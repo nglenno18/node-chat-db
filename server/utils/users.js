@@ -6,12 +6,6 @@ class Users {
   constructor (){
     this.users = [];
   }
-  isEmail(input){
-    console.log(`...is ${input} a valid email?`);
-    if((input.indexOf('@') > -1) && (input.indexOf('.') > -1)) return true;
-    return false;
-  }
-
   emailExists(em){
     var result = User.findOne({email:em});
     return result.then((docs)=>{
@@ -61,7 +55,6 @@ class Users {
       return false;
     });
   }
-
 }//END Users class
 
 module.exports = {Users};

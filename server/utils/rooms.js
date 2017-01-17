@@ -38,6 +38,7 @@ class Rooms {
           console.log('Found in ROOMS DB: ', removed);
           var index = removed.occupants.indexOf(userName);
           removed.spliceOccupant(index);
+          // removed.pullOcc(userName);
           console.log('\nOccupant removed');
         });
   }
@@ -69,8 +70,11 @@ class Rooms {
   }
 
   getRoomsList(){
-    console.log(this.rooms);
-    return this.rooms;
+    var list = ModeledRoom.find({});
+    return list.then((returned)=>{
+      console.log('Rooms List returned: ', returned);
+      return returned;
+    });
   }
 
   getRoom(name){

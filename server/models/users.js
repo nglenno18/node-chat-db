@@ -65,12 +65,6 @@ ModeledUser.methods.logout = function(token){
   });
 }
 ModeledUser.methods.removeToken = function(token){
-  // var user = this;
-  // return user.update({
-  //   $pull:{
-  //     tokens:{token}
-  //   }
-  // });
   var user = this;
   console.log('\n\nMODELEDUSER to pull token: ', token);
   user.tokens.forEach(function(t){

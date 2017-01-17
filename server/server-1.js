@@ -38,89 +38,77 @@ app.get('/accounts', function(request, response){
   });
 });
 
+var introMessage = function(name, room){
+
+};
 var repairToken = function(account, token){
-  users.findToken(token).then((returned)=>{ //WORKS FOR ONE REFRESH!!! neeed to update the sessionStorage!!
+  users.findToken(token).then((returned)=>{
     console.log(`\n\n\n\n\nREPAIRING TOKEN: ${token}\n`, returned);
-    // io.to(room).emit('updateOccupants', occupants.getOccList(room));
-    if(returned === false){
-      users.emailExists(account.toUpperCase()).then((user)=>{  //method works but does not check for duplicates
+    if(returned)return console.log('\n\n\n\n\tuser ALREADY HAD token\n\n\n');
+      users.emailExists(account.toUpperCase()).then((user)=>{
         if(user === false) return 'no EMAIL';
         user.generateToken(token).then((token)=>{
           console.log(`\n${account} TOKEN ADDED: ${token}\n`);
         });
       });
-    }else{console.log('\n\n\n\n\tuser ALREADY HAD token\n\n\n');}
   });
-}
+};//end REPAIR TOKEN method
+
+var validateUser = function(params, callback){
+  var em = params.email.toUpperCase();
+  if(!validator.isEmail(em))return callback('INVALID EMAIL REQUEST'); //Request new Attempt
+  if(params.password.length < 5)return callback('Password must be at least 5 characters');
+  users.emailExists(em).then((docs)=>{
+    if(docs === false) return callback('ADD');
+    bcrypt.compare(params.password, docs.password, (err, result)=>{
+      if(!result)return callback('Password does not match that Email Account')
+      docs.generateToken('').then((token)=> callback(null, token));
+    });
+  });
+} //end validateUser method
 
 io.on('connection', (socket)=>{
   socket.on('repairToken', function(sessionStorage, callback){
     console.log('\n\nCONNECTED USER -- need to find existing token\n\n');
     if(sessionStorage.token) repairToken(sessionStorage.email, sessionStorage.token);
   });
-
   console.log(`\nNew user connected:  \n\t(socket.id):${socket.id}\n`);
-  // console.log('\nExisting Rooms: ', rooms.rooms);
-  rooms.getRoomsList().then((returned)=>{
-    socket.emit('updateRoomsList', returned);
-  });
+  socket.emit('updateRoomsList', rooms.getRoomsList());
 
   socket.on('validateUser', function(params, callback){
-    var em = params.email.toUpperCase();
-    if(!validator.isEmail(em))return callback('INVALID EMAIL REQUEST'); //console.log('ALERT USER to retry email request');
-    if(params.password.length < 5)return callback('Password must be at least 5 characters');
-    users.emailExists(em).then((docs)=>{
-      if(docs === false) return callback('ADD');
-      var returnedPassword = docs.password;
-      bcrypt.compare(params.password, docs.password, (err, result)=>{
-        if(!result)return callback('Password does not match that Email Account')
-        docs.generateToken('').then((token)=> callback(null, token));
-      });
-    });
+    validateUser(params, callback);
   });//end VALIDATE USER socket event listener
 
   socket.on('registerUser', function(params, callback){
-    //console.log('...Client --> Server addUser...');
-    var email = params.email.toUpperCase();
-    var ptoken = params.password;
-    //console.log('ADD USER (password ptoken) created: ', ptoken);
-    var newUser = users.addUser(email, ptoken);
-    newUser.then((token)=>{
-      callback(token);
-    }).catch((e)=>{
+    var newUser = users.addUser(params.email.toUpperCase(), params.password);
+    newUser.then((token)=>{callback(token)}).catch((e)=>{
       console.log('Error returned to server, should send back to client', e);
     });
   });//end REGISTERUSER socketeventListener
 
   socket.on('verifyToken', function(token, callback){
-    var t = users.findToken(token);
-    t.then((docs)=>{callback(docs)})
+    users.findToken(token).then((docs)=>{callback(docs)})
   });
 
   socket.on('logout', function(token, callback){
-    var t = users.findToken(token);
-    t.then((docs)=>{
-      var removedToken = docs.logout(token);
-      removedToken.then((d)=>{
-        if(d.ok === 1)callback(d);
+    users.findToken(token).then((docs)=>{
+      docs.logout(token).then((d)=>{
+        if(d.ok === 1) callback(d);
       });
     });
   });
 
   socket.on('join', function(params, sessionStorage, callback){
     debugger;
-    //validate data (name and room) --> create new utils file for duplicate code
-    if(!isRealString(params.name) || !isRealString(params.room)){
-      return callback('Name and Room Name are required');
-    }
-    var name = params.name;
+    if(!isRealString(params.name) || !isRealString(params.room)) return callback('Name and Room Name are required');
+
     var account = sessionStorage.email;
     var token = sessionStorage.token;
     var taken = false;
     debugger;
     var room = params.room.toUpperCase();
-    taken = occupants.occupants.filter((occ)=> occ.displayName===name && occ.room === room);
-    if(taken.length > 0){ return callback('Display Name already exists in that Chat Room');}
+    taken = occupants.occupants.filter((occ)=> occ.displayName===params.name && occ.room === room);
+    if(taken.length > 0){ return callback('Display Name already exists in that Chat Room')}
     taken = occupants.occupants.filter((occ)=> occ._owner === params.email && occ.room === room);
     if(taken.length > 0){ return callback('EMAIL account already exists in that Chat Room')};
 
@@ -131,8 +119,7 @@ io.on('connection', (socket)=>{
           console.log('Added Room ', added);
           rooms.rooms.push(added);
         });
-      }catch(e){
-      }
+      }catch(e){}
     }
 
     socket.join(room);
@@ -141,7 +128,6 @@ io.on('connection', (socket)=>{
       occupants.removeOccupant(socket.id).then((docs)=>{
         console.log('\n\n\n\nDocs returned to server from removeOccupant method', docs);
         rooms.spliceOccupant(room , docs.displayName);
-        // io.to(room).emit('updateOccupants', occupants.getOccList(room));
         occupants.addOccupant(socket.id, params.name, room, account, token).then((docs)=>{
           console.log('Docs returned to server from addOccupant method', docs);
           rooms.pushOccupant(room , docs.displayName);
@@ -155,7 +141,6 @@ io.on('connection', (socket)=>{
         io.to(room).emit('updateOccupants', occupants.getOccList(room));
       });
     }
-
     var msg = generateMessage(`ADMIN`,
                       `\tHello, Occupant(${params.name})! \n\tWelcome to the ${room}!`,
                       undefined,
@@ -163,9 +148,7 @@ io.on('connection', (socket)=>{
     var msg2 =  generateMessage('ADMIN', `${params.name} has joined`,
                 undefined,
                 room);
-    msg.then((docs)=>{
-      socket.emit('newMessage', docs);
-    });
+    msg.then((docs)=> socket.emit('newMessage', docs));
     msg2.then((docs)=>{
       socket.broadcast.to(room).emit('newMessage', docs);
       callback(); //no arg because we set up the first arg to be an error arg in chat.js
@@ -174,17 +157,13 @@ io.on('connection', (socket)=>{
   });
 
   socket.on('fetchMessages', function(r, callback){
-    //console.log('\nstarting fetchMessages request from client\n\nprint & return messages: ', r);
     var msgs = messages.fetchMessages(r);
-    return msgs.then((docs)=>{
-      //console.log('Room Messages fetched: ', docs);
-      callback(docs);
-    });
+    return msgs.then((docs)=> callback(docs));
   });
 
   socket.on('createMessage', function(createdMessage, callback){
     var occupant = occupants.getOccupant(socket.id);
-    if(!occupant) //console.log('\nERROR: occupant was not found?!?!?'); callback();
+    // if(!occupant) //console.log('\nERROR: occupant was not found?!?!?'); callback();
     if(!isRealString(createdMessage.text)) callback();
     var msg = generateMessage(occupant.displayName, createdMessage.text, occupant.id, occupant.room);
     msg.then((m)=>{
@@ -197,7 +176,7 @@ io.on('connection', (socket)=>{
   //GEOLOCATION EVENT listener
   socket.on('createLocationMessage', function(user, coords){
     var occ = occupants.getOccupant(socket.id);
-    //console.log('GeoLocation OCCUPANT: ', occ);
+    console.log('GeoLocation OCCUPANT: ', occ);
     io.to(occ.room).emit('newLocationMessage',
     generateLocationMessage(occ.displayName, coords.latitude, coords.longitude));
   });
@@ -225,7 +204,9 @@ io.on('connection', (socket)=>{
         });
         //
         io.to(room).emit('updateOccupants', occupants.getOccList(room));
-        //update online rooms on join page
+        // mess.then((d)=>{
+        //   io.to(room).emit('newMessage', d);
+        // });
       });
     }catch(e){
       console.log('\nERROR thrown at Disconnect Occupants');

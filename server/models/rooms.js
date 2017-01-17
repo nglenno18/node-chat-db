@@ -25,10 +25,21 @@ RoomSchema.methods.spliceOccupant = function(index){
   var room = this;
   // var roomObject = user.toObject();
   console.log(`\n SPLICING Occupant (${index} out of ROOM: ${room.roomName})`);
-  room.occupants.splice(index, 1);
+  room.occupants.splice(index);
   console.log('\n\nSpliced: ', room.occupants);
   room.save();
 };
+
+RoomSchema.methods.pullOcc = function(occ){
+  var room = this;
+  console.log('\n\n\n\n\nPulling occupant: ', occ);
+  return room.update({
+    $pull:{
+      occupants:{occ}
+    }
+  });
+}
+
 
 RoomSchema.methods.pushMessage = function(msgName){
   var room = this;
@@ -40,7 +51,10 @@ RoomSchema.methods.pushMessage = function(msgName){
 };
 RoomSchema.post('save', function(docs){
   console.log('ROOM has been successfully saved', docs);
-})
+});
+RoomSchema.post('update', function(docs){
+  console.log('ROOM has been successfully updated', docs);
+});
 
 
 var ModeledRoom = mongoose.model('Room', RoomSchema);
