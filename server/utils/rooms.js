@@ -37,8 +37,19 @@ class Rooms {
     return room.then((removed)=>{
           console.log('Found in ROOMS DB: ', removed);
           var index = removed.occupants.indexOf(userName);
-          removed.spliceOccupant(index);
+          // removed.spliceOccupant(index);
           // removed.pullOcc(userName);
+          var temp = removed.occupants;
+
+          removed.clearOccs();
+          console.log('Cleared occupants: ', removed.occupants);
+          temp.forEach((ex)=>{
+            console.log('\tEX: ', ex);
+            if(ex.toString() != userName.toString()){
+              console.log('Added to occs: ', ex);
+              removed.occupants.push(ex);
+            }
+          })
           console.log('\nOccupant removed');
         });
   }
@@ -152,23 +163,6 @@ class Rooms {
       return r;
     }
   }
-
-  // updateMessages(name, message){
-  //   // var r = this.getRoom(name);
-  //   console.log('\n\nRoom Name to be updated: ', name);
-  //   var matches= this.rooms.filter(function(r){
-  //     return r.name === name;
-  //   });
-  //   var r = matches[0];
-  //   console.log('\n', r);      //HOW THE FUCK IS THIS UNDEFINED
-  //   console.log('\n\n\n');
-  //   if(r){
-  //     console.log('Should have updateMessages for ROOM', r.name);
-  //     console.log(message);
-  //     r.messages.push(message);
-  //     return r;
-  //   }
-  // }
 
 }//END ROOMS class
 

@@ -40,6 +40,13 @@ RoomSchema.methods.pullOcc = function(occ){
   });
 }
 
+RoomSchema.methods.clearOccs = function(){
+  var room = this;
+  console.log('Clearing all Occupants');
+  room.occupants = [];
+  return room.save();
+}
+
 
 RoomSchema.methods.pushMessage = function(msgName){
   var room = this;

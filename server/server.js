@@ -140,7 +140,7 @@ io.on('connection', (socket)=>{
     try{
       occupants.removeOccupant(socket.id).then((docs)=>{
         console.log('\n\n\n\nDocs returned to server from removeOccupant method', docs);
-        rooms.spliceOccupant(room , docs.displayName);
+        rooms.spliceOccupant(room, docs.displayName);
         // io.to(room).emit('updateOccupants', occupants.getOccList(room));
         occupants.addOccupant(socket.id, params.name, room, account, token).then((docs)=>{
           console.log('Docs returned to server from addOccupant method', docs);
@@ -218,11 +218,12 @@ io.on('connection', (socket)=>{
             console.log('Logged Out');
           });
         });
-        rooms.extractRoom(room).then((ro)=>{
-          console.log('Room extracted: ', ro);
-          ro.spliceOccupant(docs.displayName);
-          // ro.pullOcc(docs.displayName);
-        });
+        rooms.spliceOccupant(room, docs.displayName);
+        // rooms.extractRoom(room).then((ro)=>{
+        //   console.log('Room extracted: ', ro);
+        //   ro.spliceOccupant(room, docs.displayName);
+        //   // ro.pullOcc(docs.displayName);
+        // });
         //
         io.to(room).emit('updateOccupants', occupants.getOccList(room));
         //update online rooms on join page
