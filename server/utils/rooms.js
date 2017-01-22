@@ -41,7 +41,7 @@ class Rooms {
           // removed.pullOcc(userName);
           var temp = removed.occupants;
 
-          removed.clearOccs();
+          removed.clearOccs()
           console.log('Cleared occupants: ', removed.occupants);
           temp.forEach((ex)=>{
             console.log('\tEX: ', ex);

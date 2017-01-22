@@ -62,7 +62,11 @@ io.on('connection', (socket)=>{
   console.log(`\nNew user connected:  \n\t(socket.id):${socket.id}\n`);
   // console.log('\nExisting Rooms: ', rooms.rooms);
   rooms.getRoomsList().then((returned)=>{
-    socket.emit('updateRoomsList', returned);
+    var list = [];
+    returned.forEach((ro)=>{
+      if(ro.occupants.length > 0) list.push(ro);
+    });
+    socket.emit('updateRoomsList', list);
   });
 
   socket.on('validateUser', function(params, callback){
