@@ -37,16 +37,20 @@ app.get('/accounts', function(request, response){
     return response.send(d);
   });
 });
+app.get('/rooms', function(request, response){
+  rooms.getRoomsList().then((d)=>{
+    return response.send(JSON.stringify(d, 2, undefined));
+  })
+});
 
 var repairToken = function(account, token){
   users.findToken(token).then((returned)=>{ //WORKS FOR ONE REFRESH!!! neeed to update the sessionStorage!!
-    console.log(`\n\n\n\n\nREPAIRING TOKEN: ${token}\n`, returned);
-    // io.to(room).emit('updateOccupants', occupants.getOccList(room));
+    console.log(`\n\n\n\n\nREPAIRING TOKEN:\n`);
     if(returned === false){
       users.emailExists(account.toUpperCase()).then((user)=>{  //method works but does not check for duplicates
         if(user === false) return 'no EMAIL';
         user.generateToken(token).then((token)=>{
-          console.log(`\n${account} TOKEN ADDED: ${token}\n`);
+          console.log(`\n${account} TOKEN ADDED: \n`);
         });
       });
     }else{console.log('\n\n\n\n\tuser ALREADY HAD token\n\n\n');}
@@ -87,7 +91,6 @@ io.on('connection', (socket)=>{
     //console.log('...Client --> Server addUser...');
     var email = params.email.toUpperCase();
     var ptoken = params.password;
-    //console.log('ADD USER (password ptoken) created: ', ptoken);
     var newUser = users.addUser(email, ptoken);
     newUser.then((token)=>{
       callback(token);
@@ -181,14 +184,13 @@ io.on('connection', (socket)=>{
     //console.log('\nstarting fetchMessages request from client\n\nprint & return messages: ', r);
     var msgs = messages.fetchMessages(r);
     return msgs.then((docs)=>{
-      //console.log('Room Messages fetched: ', docs);
       callback(docs);
     });
   });
 
   socket.on('createMessage', function(createdMessage, callback){
     var occupant = occupants.getOccupant(socket.id);
-    if(!occupant) //console.log('\nERROR: occupant was not found?!?!?'); callback();
+    // if(!occupant) //console.log('\nERROR: occupant was not found?!?!?'); callback();
     if(!isRealString(createdMessage.text)) callback();
     var msg = generateMessage(occupant.displayName, createdMessage.text, occupant.id, occupant.room);
     msg.then((m)=>{
@@ -215,20 +217,14 @@ io.on('connection', (socket)=>{
         console.log('Docs returned to server from removeOccupant method', docs);
         var token = docs.token;
         var room = docs.room;
-        console.log('\n\n\nToken to remove!: ', token);
+        console.log('\n\n\nToken to remove!: ');
         User.findByToken(token).then((doc)=>{
-          console.log('User found through token: ', doc);
+          console.log('User found through token: ');
           doc.logout(token).then((out)=>{
             console.log('Logged Out');
           });
         });
         rooms.spliceOccupant(room, docs.displayName);
-        // rooms.extractRoom(room).then((ro)=>{
-        //   console.log('Room extracted: ', ro);
-        //   ro.spliceOccupant(room, docs.displayName);
-        //   // ro.pullOcc(docs.displayName);
-        // });
-        //
         io.to(room).emit('updateOccupants', occupants.getOccList(room));
         //update online rooms on join page
       });

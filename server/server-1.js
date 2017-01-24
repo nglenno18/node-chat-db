@@ -34,7 +34,7 @@ app.use(express.static(publicPath));
 
 app.get('/accounts', function(request, response){
   users.getAccounts().then((d)=>{
-    return response.send(d);
+    return response.send(JSON.stringify(d, undefined, 2));
   });
 });
 
@@ -43,12 +43,12 @@ var introMessage = function(name, room){
 };
 var repairToken = function(account, token){
   users.findToken(token).then((returned)=>{
-    console.log(`\n\n\n\n\nREPAIRING TOKEN: ${token}\n`, returned);
+    // console.log(`\n\n\n\n\nREPAIRING TOKEN: ${token}\n`, returned);
     if(returned)return console.log('\n\n\n\n\tuser ALREADY HAD token\n\n\n');
       users.emailExists(account.toUpperCase()).then((user)=>{
         if(user === false) return 'no EMAIL';
         user.generateToken(token).then((token)=>{
-          console.log(`\n${account} TOKEN ADDED: ${token}\n`);
+          // console.log(`\n${account} TOKEN ADDED: ${token}\n`);
         });
       });
   });
@@ -176,7 +176,7 @@ io.on('connection', (socket)=>{
   //GEOLOCATION EVENT listener
   socket.on('createLocationMessage', function(user, coords){
     var occ = occupants.getOccupant(socket.id);
-    console.log('GeoLocation OCCUPANT: ', occ);
+    // console.log('GeoLocation OCCUPANT: ', occ);
     io.to(occ.room).emit('newLocationMessage',
     generateLocationMessage(occ.displayName, coords.latitude, coords.longitude));
   });
@@ -187,12 +187,12 @@ io.on('connection', (socket)=>{
     var occupant;
     try{
       occupant = occupants.removeOccupant(socket.id).then((docs)=>{
-        console.log('Docs returned to server from removeOccupant method', docs);
+        // console.log('Docs returned to server from removeOccupant method', docs);
         var token = docs.token;
         var room = docs.room;
-        console.log('\n\n\nToken to remove!: ', token);
+        // console.log('\n\n\nToken to remove!: ', token);
         User.findByToken(token).then((doc)=>{
-          console.log('User found through token: ', doc);
+          console.log('User found through token');
           doc.logout(token).then((out)=>{
             console.log('Logged Out');
           });

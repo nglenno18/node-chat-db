@@ -4,11 +4,19 @@
 <head>
   <meta charset="utf-8">
 </head>
-<style>
+<style type="text/css">
+.clear-float{
+  clear:both;
+}
 .highlight{border-color: red}
+.centered{
+  width: 1000px;
+  margin: auto;
+}
 </style>
 <body>
-  <div class="centered-form__form">
+  <div class="clear-float"></div>
+  <div class="centered">
     <form id= "login-form" action="/join.html">
       <div class="form-field">
         <h3>Email Credentials</h3>
@@ -31,15 +39,15 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script src = "/js/libs/jquery-3.1.1.min.js"></script>
-  <script src = "/js/login.js">
-    // var socket = io();
-    //
-    // socket.on('connect', ()=>{
-    //   console.log('Connected to the SERVER');
-    // });
-    // socket.on('disconnect', ()=>{
-    //   console.log('Disconnected from the SERVER');
-    // });
-  </script>
+  <script src = "/js/login.js"></script>
+
+  <div class="clear-float"></div>
+  <div id="links">
+    <hr></hr>
+    <h4>Database Logs</h4>
+    <a href="/accounts">All Registered Emails</a>
+    <br>
+    <a href="/rooms">All Rooms Created</a>
+  </div>
 </body>
 </html>

@@ -2,9 +2,9 @@
 var socket = io();
 var messageForm = jQuery('#messages');
 var stored = [];
+if(!sessionStorage.token) window.location.href = "/";
 console.log('Stored Messages: ', JSON.stringify(sessionStorage.getItem('messages'), undefined, 2));
-  // console.log('Messages :', sessionStorage.getItem('messages').length);
-// if(sessionStorage.messages) stored = sessionStorage.messages;
+
 function scrollToBottom(){
   // Selectors
   var messages = jQuery('#messages');
@@ -31,7 +31,6 @@ function scrollToBottom(){
 socket.emit('repairToken', sessionStorage, function(){
   console.log('Callback Called: ');
 });
-
 
 socket.on('connect', function(){
   console.log(socket.id);

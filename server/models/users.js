@@ -40,8 +40,24 @@ ModeledUser.methods.toJSON = function(){
   var userObject = user.toObject();
 
   //import lodash --> need to use pick method to pick which data is returned to user
-  return _.pick(userObject, ['_id', 'email']);
+  var obj = _.pick(userObject, ['_id', 'email']);
+  var name = obj.email.substring(0, obj.email.indexOf("@"));
+  var last = name.charAt(name.length-1);
+  var ast = name.charAt(0);
+  for(var i = 1; i <=(name.length-2); i ++){
+    ast += "*";
+  }
+  ast += last + "@";
+  var post = obj.email.substring(obj.email.indexOf("@"));
+  for(var i=0; i<post.length - post.substring(1, post.indexOf(".")).length; i++){
+    ast += "*";
+  }
+  ast += obj.email.substring(obj.email.lastIndexOf("."));
+  obj.email = ast;
+
+  return obj;
 };
+
 ModeledUser.methods.generateToken = function(token){
   var user = this;
 
