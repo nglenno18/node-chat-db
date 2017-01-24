@@ -148,6 +148,7 @@ io.on('connection', (socket)=>{
       occupants.removeOccupant(socket.id).then((docs)=>{
         console.log('\n\n\n\nDocs returned to server from removeOccupant method', docs);
         rooms.spliceOccupant(room, docs.displayName);
+        
         // io.to(room).emit('updateOccupants', occupants.getOccList(room));
         occupants.addOccupant(socket.id, params.name, room, account, token).then((docs)=>{
           console.log('Docs returned to server from addOccupant method', docs);

@@ -34,13 +34,16 @@ class Rooms {
     console.log('\n\n Occupant to be REMOVED from room ', roomName);
     var room =
     ModeledRoom.findOne({roomName});
+
     return room.then((removed)=>{
           console.log('Found in ROOMS DB: ', removed);
           var index = removed.occupants.indexOf(userName);
           // removed.spliceOccupant(index);
           // removed.pullOcc(userName);
           var temp = removed.occupants;
-
+          if(temp.length === 1){
+            removed.clearMessages();
+          }
           removed.clearOccs()
           console.log('Cleared occupants: ', removed.occupants);
           temp.forEach((ex)=>{
@@ -50,6 +53,7 @@ class Rooms {
               removed.occupants.push(ex);
             }
           })
+
           console.log('\nOccupant removed');
         });
   }

@@ -46,6 +46,12 @@ RoomSchema.methods.clearOccs = function(){
   room.occupants = [];
   return room.save();
 }
+RoomSchema.methods.clearMessages = function(){
+  var room = this;
+  console.log('Clearing all MESSAGES');
+  room.messages = [];
+  return room.save();
+}
 
 
 RoomSchema.methods.pushMessage = function(msgName){
@@ -59,6 +65,12 @@ RoomSchema.methods.pushMessage = function(msgName){
 RoomSchema.post('save', function(docs){
   console.log('ROOM has been successfully saved', docs);
 });
+// RoomSchema.pre('save', function(next){
+//   if(this.occupants = []){
+//     this.messages = [];
+//   }
+//   next();
+// });
 RoomSchema.post('update', function(docs){
   console.log('ROOM has been successfully updated', docs);
 });
