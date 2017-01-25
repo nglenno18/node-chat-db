@@ -146,9 +146,9 @@ io.on('connection', (socket)=>{
     //MAYBE ONLY SAVE BROADCASTED MESSAGES TO THE DB?
     try{
       occupants.removeOccupant(socket.id).then((docs)=>{
-        console.log('\n\n\n\nDocs returned to server from removeOccupant method', docs);
+        console.log('\n\n\n\nDocs returned to server from removeOccupant method', docs.displayName);
         rooms.spliceOccupant(room, docs.displayName);
-        
+
         // io.to(room).emit('updateOccupants', occupants.getOccList(room));
         occupants.addOccupant(socket.id, params.name, room, account, token).then((docs)=>{
           console.log('Docs returned to server from addOccupant method', docs);
@@ -183,9 +183,14 @@ io.on('connection', (socket)=>{
 
   socket.on('fetchMessages', function(r, callback){
     //console.log('\nstarting fetchMessages request from client\n\nprint & return messages: ', r);
-    var msgs = messages.fetchMessages(r);
-    return msgs.then((docs)=>{
-      callback(docs);
+    // var msgs = messages.fetchMessages(r);
+    // return msgs.then((docs)=>{
+    //   callback(docs);
+    // });
+    var roomObj = rooms.fetchMessages(r);
+    return roomObj.then(function(ro){
+      console.log(ro, '*^^^^^^^^^^^^^^^^^^^\n\n\n\n\n');
+      callback(ro[0].messages);
     });
   });
 

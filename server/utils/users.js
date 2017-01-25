@@ -10,7 +10,7 @@ class Users {
     var result = User.findOne({email:em});
     return result.then((docs)=>{
       if(!docs) return false;
-      console.log('Email match was found!', docs);
+      console.log('Email match was found!', docs.email);
       return docs;
     });
   }
@@ -47,9 +47,8 @@ class Users {
     var t = User.findByToken(token);
     //console.log(t);
     return t.then((d)=>{
-      console.log('findToken: ', d);
       if(d){
-        console.log('\n\n\nDocs to Util from model.findByToken:', d);
+        console.log('\n\n\nFOUND TOKEN: --> Docs to Util from model.findByToken:', d.email);
         return d;
       }
       return false;

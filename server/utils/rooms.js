@@ -168,6 +168,14 @@ class Rooms {
     }
   }
 
+  fetchMessages(r){
+    var roomObj = ModeledRoom.find({roomName:r});
+    return roomObj.then(function(ro){
+      console.log('\n\n\n\n***********Room Messages retrieved from: ', ro);
+      return ro;
+    });
+  }
+
 }//END ROOMS class
 
 module.exports = {Rooms};

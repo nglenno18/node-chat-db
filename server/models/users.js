@@ -85,9 +85,9 @@ ModeledUser.methods.removeToken = function(token){
   console.log('\n\nMODELEDUSER to pull token: ', token);
   user.tokens.forEach(function(t){
     console.log('TOKENID: ', t._id);
-    console.log('MODELEDUSER PULLED TOKEN : ', user);
+    console.log('MODELEDUSER PULLED TOKEN : ', user.email);
     if(t.token === token){
-      console.log('USER PULL TOKEN: ', user.tokens);
+      console.log('USER PULL TOKEN: NUMBER of tokens: ', user.tokens.length);
       user.tokens.splice(user.tokens.indexOf(token), 1);
       return user.save();
     }
@@ -131,7 +131,7 @@ ModeledUser.pre('save',function(next){
   }
 });
 ModeledUser.post('save', function(docs){
-  console.log('User has been successfully saved', docs);
+  console.log('User has been successfully saved', docs.toJSON());
 })
 
 var User = mongoose.model('User', ModeledUser);

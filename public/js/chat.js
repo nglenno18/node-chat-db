@@ -48,7 +48,7 @@ socket.on('connect', function(){
         // if(!dbdata) console.log('Error fetching Room messages from the DB', dbdata);
         console.log('Messsages retrieved from the Room DB', result);
         result.forEach((msg)=>{
-          // console.log('Message: ', msg);
+          console.log('Message: ', msg);
           var formattedTime = moment(msg.completedAt).format('h:mm a');
           var template = jQuery('#message-template').html();
           var m = {
@@ -57,7 +57,7 @@ socket.on('connect', function(){
             createdAt: formattedTime,
             from: msg.from
           }
-          var html = Mustache.render(template,m);
+          var html = Mustache.render(template, m);
           // socket.emit('updateMessages', message);
           socket.emit('updateMessages', m);
           jQuery('#messages').append(html);

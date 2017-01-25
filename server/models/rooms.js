@@ -52,6 +52,14 @@ RoomSchema.methods.clearMessages = function(){
   room.messages = [];
   return room.save();
 }
+RoomSchema.statics.fetchMessages = function(r){
+  var ModeledRoom = this;
+  console.log('\n\n\n\n\n\n\n&&&&&&&&&&&&&&&&&&&&&&&\n', ro);
+  var roomObj = ModeledRoom.find({roomName:r});
+  return room.then(function(ro){
+    return ro.messages;
+  });
+}
 
 
 RoomSchema.methods.pushMessage = function(msgName){
